@@ -57,6 +57,8 @@ async function handleErrors(logData) {
     }
   });
 
+  console.log("error " + errorMessages[0].errorMessage);
+
   const options = {
     method: "POST",
     headers: {
@@ -78,6 +80,7 @@ async function handleErrors(logData) {
 
   const response = await fetch(OPENAI_ENDPOINT, options);
   const data = await response.json();
+  console.log("response " + data);
 
   if (!response.ok) {
     throw new Error(data.error || "Error fetching a fix.");
