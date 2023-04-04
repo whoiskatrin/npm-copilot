@@ -28,33 +28,36 @@ tail.stdout.on("data", async (data) => {
   }
 });
 
-async function handleErrors(errorMessage) {
-  const { level, message } = JSON.parse(logData);
+async function handleErrors(logData) {
+  try {
+    const { level, message } = JSON.parse(logData);
 
-  if (level !== "error") {
-    return undefined; // Add a return statement here
+    if (level !== "error") {
+      return undefined; // Add a return statement here
+    }
+
+    const errorMessage = message;
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
+        model: "text-davinci-002",
+        temperature: 0.5,
+        max_tokens: 147,
+        top_p: 1,
+        stop: "\\n",
+        best_of: 2,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      }),
+    };
+  } catch (error) {
+    logger.error(error.message);
   }
-
-  const errorMessage = message;
-
-  const options = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${openaiApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
-      model: "text-davinci-002",
-      temperature: 0.5,
-      max_tokens: 147,
-      top_p: 1,
-      stop: "\\n",
-      best_of: 2,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    }),
-  };
 
   const response = await fetch(OPENAI_ENDPOINT, options);
 
