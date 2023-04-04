@@ -32,13 +32,8 @@ async function handleErrors(logData) {
     }
 
     const trimmedLogData = logData.trim();
-    const { level, message } = JSON.parse(trimmedLogData);
+    const errorMessage = trimmedLogData;
 
-    if (level !== "error") {
-      return undefined;
-    }
-
-    const errorMessage = message;
     const options = {
       method: "POST",
       headers: {
