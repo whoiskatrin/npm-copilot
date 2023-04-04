@@ -1,40 +1,13 @@
-#!/usr/bin/env node
+import { spawn } from "child_process";
+import logger from "./logger.js";
+import { handleErrors } from "./error-analyzer.js";
 
-import fs from "fs";
-import path from "path";
-import dotenv from "dotenv";
-import yargs from "yargs-parser";
-import { handleErrors } from "./src/cli.js";
+const nextProcess = spawn("npm", ["run", "dev"]);
 
-const argv = yargs(process.argv.slice(2));
+nextProcess.stdout.pipe(logger);
 
-dotenv.config();
-
-const openaiApiKey = process.env.OPENAI_API_KEY;
-
-async function main() {
-  const filePath = String(argv._[0]); // make sure to cast to string, you idiot
-  console.log(`Reading code from file: ${filePath}`);
-
-  if (!fs.existsSync(filePath)) {
-    console.error(`File not found: ${filePath}`);
-    process.exit(1);
+logger.on("data", (data) => {
+  if (data.includes("error")) {
+    handleErrors(data);
   }
-
-  const fileExtension = path.extname(filePath);
-
-  if (fileExtension !== ".js" && fileExtension !== ".ts") {
-    console.error(`Invalid file type: ${fileExtension}`);
-    process.exit(1);
-  }
-
-  const code = fs.readFileSync(filePath, "utf-8");
-
-  try {
-    eval(`(function() { ${code} })()`);
-  } catch (error) {
-    await handleErrors(error, code, filePath);
-  }
-}
-
-main();
+});
