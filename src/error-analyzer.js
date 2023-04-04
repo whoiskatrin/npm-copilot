@@ -16,7 +16,7 @@ tail.stdout.on("data", async (data) => {
     buffer += chunk;
     const lines = buffer.split("\n");
     buffer = lines.pop();
-    console.log(lines);
+    console.log("lines" + lines);
 
     for (const line of lines) {
       try {
@@ -34,7 +34,7 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
-  console.log(logData);
+  console.log("logdata" + logData);
   try {
     if (typeof logData !== "string" || !logData.trim()) {
       console.log("log data is undefined");
