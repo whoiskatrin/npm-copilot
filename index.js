@@ -5,9 +5,12 @@ import logger from "./src/logger.js";
 import { handleErrors } from "./src/error-analyzer.js";
 
 const command = process.argv[2] || "dev";
-const nextProcess = spawn("npm", ["run", command]);
+const nextProcess = spawn("npm", ["run", command], {
+  stdio: ["ignore", "pipe", "pipe"],
+});
 
 nextProcess.stdout.pipe(logger);
+nextProcess.stderr.pipe(logger);
 
 logger.on("data", async (data) => {
   try {

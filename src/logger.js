@@ -7,7 +7,7 @@ const logFormatter = format.printf((info) => {
 });
 
 const logger = createLogger({
-  levels: { info: 0 },
+  levels: { info: 0, error: 1 }, // add error level
   format: format.errors({ stack: true }),
   transports: [
     new transports.Console({
@@ -17,6 +17,7 @@ const logger = createLogger({
         format.timestamp(),
         logFormatter
       ),
+      stderrLevels: ["error"], // log error level to stderr
     }),
   ],
 });
