@@ -29,8 +29,10 @@ childProcess.on("exit", () => {
 
 childProcess.stderr.on("data", (data) => {
   logger.error(data.toString());
+  handleErrors(data.toString);
 });
 
 childProcess.stdout.on("data", (data) => {
   logger.error(data.toString());
+  handleErrors(data.toString);
 });
