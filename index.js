@@ -9,8 +9,15 @@ const nextProcess = spawn("npm", ["run", command]);
 
 nextProcess.stdout.pipe(logger);
 
-logger.on("data", (data) => {
-  handleErrors(data);
+logger.on("data", async (data) => {
+  try {
+    const suggestion = await handleErrors(data);
+    if (suggestion) {
+      console.log(suggestion);
+    }
+  } catch (error) {
+    logger.error(error.message);
+  }
 });
 
 nextProcess.on("exit", () => {

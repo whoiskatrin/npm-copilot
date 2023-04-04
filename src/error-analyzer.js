@@ -8,33 +8,29 @@ dotenv.config();
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
-const argv = yargs(process.argv.slice(2));
-const logFilePath = argv.log || "combined.log";
-const maxLogs = argv.maxLogs || 1000;
-const command = argv._[0];
+const { spawn } = require("child_process");
 
-const tail = spawn("tail", ["-n", maxLogs, "-f", logFilePath]);
+const tail = spawn("tail", ["-f", "path/to/your/log/file"]);
 
 tail.stdout.on("data", async (data) => {
-  try {
-    const suggestion = await handleErrors(data.toString());
-    if (suggestion) {
-      console.log(suggestion);
+  const lines = data.toString().split("\n");
+  for (const line of lines) {
+    try {
+      const { level, message } = JSON.parse(line);
+      if (level === "error") {
+        const suggestion = await handleErrors(message);
+        if (suggestion) {
+          const term = spawn("gnome-terminal");
+          term.stdin.write(suggestion);
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    logger.error(error.message);
   }
 });
 
-async function handleErrors(logData) {
-  const { level, message } = JSON.parse(logData);
-
-  if (level !== "error") {
-    return;
-  }
-
-  const errorMessage = message;
-
+async function handleErrors(errorMessage) {
   const options = {
     method: "POST",
     headers: {
@@ -62,12 +58,6 @@ async function handleErrors(logData) {
   }
 
   return data.choices[0].text.trim();
-}
-
-if (command) {
-  const commandProcess = spawn("npm", ["run", command]);
-  commandProcess.stdout.pipe(process.stdout);
-  commandProcess.stderr.pipe(process.stderr);
 }
 
 export { handleErrors };
