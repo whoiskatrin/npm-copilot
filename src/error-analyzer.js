@@ -67,7 +67,4 @@ async function handleErrorsFromFile(filePath) {
   });
 }
 
-const filePath = String(argv._[0]);
-handleErrorsFromFile(filePath);
-
 export { handleErrors };
