@@ -32,5 +32,5 @@ childProcess.stderr.on("data", (data) => {
 });
 
 childProcess.stdout.on("data", (data) => {
-  logger.log(data.toString());
+  logger.error(data.toString());
 });
