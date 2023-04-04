@@ -12,27 +12,25 @@ const childProcess = spawn("npm", ["run", "dev"], {
 childProcess.stdout.pipe(process.stdout);
 childProcess.stderr.pipe(process.stderr);
 
-const errorLogger = logger("error");
-
-errorLogger.on("data", async (data) => {
+logger.on("data", async (data) => {
   try {
     const suggestion = await handleErrors(data);
     if (suggestion) {
       console.log(suggestion);
     }
   } catch (error) {
-    errorLogger.error(error.message);
+    logger.error(error.message);
   }
 });
 
 childProcess.on("exit", () => {
-  errorLogger.end();
+  logger.end();
 });
 
 childProcess.stderr.on("data", (data) => {
-  console.error(data.toString());
+  logger.error(data.toString());
 });
 
 childProcess.stdout.on("data", (data) => {
-  console.log(data.toString());
+  logger.log(data.toString());
 });
