@@ -39,8 +39,6 @@ async function handleErrors(logData) {
     .split("\n")
     .filter((line) => line.trim().startsWith("Error:"));
 
-  console.log("errorLines " + errorLines);
-
   if (errorLines.length === 0) {
     return undefined;
   }
@@ -55,8 +53,6 @@ async function handleErrors(logData) {
       return { errorMessage: message };
     }
   });
-
-  console.log("error " + errorMessages[0].errorMessage);
 
   const options = {
     method: "POST",
