@@ -34,11 +34,11 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
+  console.log("logData " + logData);
+  console.log(logData.toString());
   if (typeof logData !== "string" || !logData.trim()) {
     return undefined;
   }
-
-  console.log("logData " + logData);
   const errorLines = logData
     .split("\n")
     .filter((line) => line.trim().startsWith("Error:"));
