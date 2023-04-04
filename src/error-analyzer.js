@@ -69,3 +69,5 @@ if (command) {
   commandProcess.stdout.pipe(process.stdout);
   commandProcess.stderr.pipe(process.stderr);
 }
+
+export { handleErrors };
