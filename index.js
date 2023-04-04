@@ -6,7 +6,7 @@ import { handleErrors } from "./src/error-analyzer.js";
 
 const command = process.argv[2] || "dev";
 const nextProcess = spawn("npm", ["run", command], {
-  stdio: ["ignore", "pipe", "inherit"],
+  stdio: ["pipe", "pipe", "pipe"],
 });
 
 nextProcess.stdout.pipe(logger);
