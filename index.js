@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { spawn } from "child_process";
 import logger from "./src/logger.js";
 import { handleErrors } from "./src/error-analyzer.js";
