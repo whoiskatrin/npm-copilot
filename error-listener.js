@@ -20,26 +20,26 @@ const colors = {
   error: "\u001b[31m",
 };
 
+const loggedMessages = new Set();
+
 childProcess.stderr.on("data", async (data) => {
   const errorMsg = data.toString();
   const suggestion = await handleErrors(errorMsg);
-  if (suggestion) {
+  if (suggestion && !loggedMessages.has(errorMsg)) {
     console.log(chalk.green("Suggested fix: " + suggestion));
-  } else {
-    const logType = errorMsg.match(/^\w+/);
-    console.log(colors[logType] + errorMsg + "\x1b[0m");
+    loggedMessages.add(errorMsg);
   }
+  console.error(chalk.red(errorMsg));
 });
 
 childProcess.stdout.on("data", async (data) => {
-  const errorMsg = data.toString();
-  const suggestion = await handleErrors(errorMsg);
-  if (suggestion) {
-    console.log(chalk.green("Suggested fix: " + suggestion));
-  } else {
-    const logType = errorMsg.match(/^\w+/);
-    console.log(colors[logType] + errorMsg + "\x1b[0m");
+  const logMsg = data.toString();
+  const suggestion = await handleErrors(logMsg);
+  if (suggestion && !loggedMessages.has(logMsg)) {
+    console.log(chalk.green(suggestion));
+    loggedMessages.add(logMsg);
   }
+  console.log(chalk.white(logMsg));
 });
 
 childProcess.on("exit", () => {
