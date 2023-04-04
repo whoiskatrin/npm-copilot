@@ -28,13 +28,13 @@ childProcess.on("exit", () => {
 });
 
 childProcess.stderr.on("data", (data) => {
-  errorMsg = data.toString();
+  const errorMsg = data.toString();
   logger.error(errorMsg);
   handleErrors(errorMsg);
 });
 
 childProcess.stdout.on("data", (data) => {
-  errorMsg = data.toString();
+  const errorMsg = data.toString();
   logger.error(errorMsg);
   handleErrors(errorMsg);
 });
