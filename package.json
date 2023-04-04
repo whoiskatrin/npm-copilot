@@ -1,8 +1,8 @@
 {
   "type": "module",
-  "main": "index.js",
+  "main": "error-listener.ts",
   "bin": {
-    "npm-copilot": "./index.js"
+    "npm-copilot": "./error-listener.ts"
   },
   "dependencies": {
     "argv": "^0.0.3",
@@ -19,7 +19,7 @@
     "yargs-parser": "^21.1.1"
   },
   "name": "npm-copilot",
-  "version": "1.0.60",
+  "version": "1.0.61",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
