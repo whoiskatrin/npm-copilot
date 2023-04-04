@@ -42,7 +42,7 @@ async function handleErrors(logData) {
     }
 
     const errorMessage = logData.trim();
-    const match = errorMessage.match(/^error\s-\s(.*$)/i);
+    const match = errorMessage.match(/^Error:\s(.*)$/i);
 
     if (!match) {
       return undefined;
