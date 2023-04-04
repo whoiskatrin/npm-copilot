@@ -5,7 +5,7 @@ import logger from "./src/logger.js";
 import { handleErrors } from "./src/error-analyzer.js";
 
 const command = process.argv.slice(2);
-const childProcess = spawn(command[0], command.slice(1), {
+const childProcess = spawn("npm", ["run", "dev"], {
   stdio: ["pipe", "pipe", "pipe"],
 });
 
