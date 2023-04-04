@@ -10,26 +10,29 @@ const childProcess = spawn(command[0], command.slice(1), {
 });
 
 childProcess.stdout.pipe(process.stdout);
+childProcess.stderr.pipe(process.stderr);
 
 const errorLogger = logger("error");
 
-childProcess.stderr.on("data", async (data) => {
-  const errorMessage = data.toString();
-  errorLogger(errorMessage);
-  const suggestion = await handleErrors(errorMessage);
-  if (suggestion) {
-    console.log(suggestion);
+errorLogger.on("data", async (data) => {
+  try {
+    const suggestion = await handleErrors(data);
+    if (suggestion) {
+      console.log(suggestion);
+    }
+  } catch (error) {
+    errorLogger.error(error.message);
   }
 });
-
-childProcess.stderr.pipe(logger("error"));
 
 childProcess.on("exit", () => {
   errorLogger.end();
 });
 
-process.on("SIGINT", () => {
-  childProcess.kill("SIGINT");
-  errorLogger.end();
-  process.exit();
+childProcess.stderr.on("data", (data) => {
+  console.error(data.toString());
+});
+
+childProcess.stdout.on("data", (data) => {
+  console.log(data.toString());
 });
