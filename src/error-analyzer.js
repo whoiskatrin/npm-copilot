@@ -11,6 +11,7 @@ const tail = spawn("tail", ["-f", "path/to/your/log/file"]);
 
 tail.stdout.on("data", async (data) => {
   const lines = data.toString().split("\n");
+  console.log(data);
   for (const line of lines) {
     try {
       if (typeof line !== "string") {
