@@ -28,6 +28,7 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
+  console.log(logData);
   try {
     if (typeof logData !== "string" || !logData.trim()) {
       console.log("log data is undefined");
@@ -49,7 +50,7 @@ async function handleErrors(logData) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
+        prompt: `Fix the following error:\n\n${message}\n\nSuggested fix:`,
         model: "text-davinci-002",
         temperature: 0.5,
         max_tokens: 147,
