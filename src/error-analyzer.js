@@ -34,6 +34,7 @@ async function handleErrors(logData) {
     }),
   };
 
+  console.log("msg to API: " + errorMessage);
   const response = await fetch(OPENAI_ENDPOINT, options);
   const data = await response.json();
   console.log("response " + data);
