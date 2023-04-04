@@ -11,6 +11,7 @@ nextProcess.stdout.pipe(logger);
 
 logger.on("data", async (data) => {
   try {
+    console.log("data " + data.toString());
     const suggestion = await handleErrors(data);
     if (suggestion) {
       console.log(suggestion);
