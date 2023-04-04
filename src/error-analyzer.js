@@ -14,9 +14,8 @@ tail.stdout.on("data", async (data) => {
   const lines = data.toString().split("\n");
   for (const line of lines) {
     try {
-      const { level, message } = JSON.parse(line);
-      if (level === "error") {
-        const suggestion = await handleErrors(message);
+      if (line.includes("error")) {
+        const suggestion = await handleErrors(line);
         if (suggestion) {
           const term = spawn("gnome-terminal");
           term.stdin.write(suggestion);
@@ -29,39 +28,25 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
-  try {
-    if (typeof logData !== "string") {
-      return undefined;
-    }
-
-    const { level, message } = JSON.parse(logData);
-
-    if (level !== "error") {
-      return undefined;
-    }
-
-    const errorMessage = message;
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${openaiApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
-        model: "text-davinci-002",
-        temperature: 0.5,
-        max_tokens: 147,
-        top_p: 1,
-        stop: "\\n",
-        best_of: 2,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      }),
-    };
-  } catch (error) {
-    logger.error(error.message);
-  }
+  const errorMessage = logData.trim();
+  const options = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${openaiApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
+      model: "text-davinci-002",
+      temperature: 0.5,
+      max_tokens: 147,
+      top_p: 1,
+      stop: "\\n",
+      best_of: 2,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    }),
+  };
 
   const response = await fetch(OPENAI_ENDPOINT, options);
 
