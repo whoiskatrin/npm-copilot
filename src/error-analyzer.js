@@ -13,6 +13,9 @@ tail.stdout.on("data", async (data) => {
   const lines = data.toString().split("\n");
   for (const line of lines) {
     try {
+      if (typeof line !== "string") {
+        continue;
+      }
       const suggestion = await handleErrors(line);
       if (suggestion) {
         const term = spawn("gnome-terminal");
@@ -31,9 +34,14 @@ async function handleErrors(logData) {
       return undefined;
     }
 
-    const trimmedLogData = logData.trim();
-    const errorMessage = trimmedLogData;
+    const errorMessage = logData.trim();
+    const match = errorMessage.match(/^error\s-\s(.*$)/i);
 
+    if (!match) {
+      return undefined;
+    }
+
+    const { 1: message } = match;
     const options = {
       method: "POST",
       headers: {
