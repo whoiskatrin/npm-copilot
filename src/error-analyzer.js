@@ -8,8 +8,6 @@ dotenv.config();
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
-const { spawn } = require("child_process");
-
 const tail = spawn("tail", ["-f", "path/to/your/log/file"]);
 
 tail.stdout.on("data", async (data) => {
