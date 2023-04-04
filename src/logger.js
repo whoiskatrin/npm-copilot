@@ -7,7 +7,7 @@ const logFormatter = format.printf((info) => {
 });
 
 const logger = createLogger({
-  levels: winston.config.npm.levels,
+  levels: "info",
   format: format.errors({ stack: true }),
   transports: [
     new transports.Console({
