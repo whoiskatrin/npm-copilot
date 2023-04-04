@@ -10,7 +10,6 @@ const childProcess = spawn(command[0], command.slice(1), {
 });
 
 childProcess.stdout.pipe(process.stdout);
-childProcess.stderr.pipe(process.stderr);
 
 const errorLogger = logger("error");
 
@@ -22,6 +21,8 @@ childProcess.stderr.on("data", async (data) => {
     console.log(suggestion);
   }
 });
+
+childProcess.stderr.pipe(logger("error"));
 
 childProcess.on("exit", () => {
   errorLogger.end();
