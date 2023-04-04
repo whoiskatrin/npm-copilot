@@ -1,17 +1,30 @@
-import ts from "typescript";
-import fs from "fs";
-import chalk from "chalk";
-import path from "path";
 import dotenv from "dotenv";
-import logger from "./logger.js";
 import yargs from "yargs-parser";
-const argv = yargs(process.argv.slice(2));
+import logger from "./logger.js";
+import { spawn } from "child_process";
 
 dotenv.config();
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
-
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
+
+const argv = yargs(process.argv.slice(2));
+const logFilePath = argv.log || "combined.log";
+const maxLogs = argv.maxLogs || 1000;
+const command = argv._[0];
+
+const tail = spawn("tail", ["-n", maxLogs, "-f", logFilePath]);
+
+tail.stdout.on("data", async (data) => {
+  try {
+    const suggestion = await handleErrors(data.toString());
+    if (suggestion) {
+      console.log(suggestion);
+    }
+  } catch (error) {
+    logger.error(error.message);
+  }
+});
 
 async function handleErrors(logData) {
   const { level, message } = JSON.parse(logData);
@@ -51,20 +64,8 @@ async function handleErrors(logData) {
   return data.choices[0].text.trim();
 }
 
-async function handleErrorsFromFile(filePath) {
-  const program = ts.createProgram([filePath], {});
-  const result = await ts.getPreEmitDiagnostics(program);
-  const syntaxErrors = result.filter(
-    (error) => error.category === ts.DiagnosticCategory.Error
-  );
-
-  syntaxErrors.forEach((error) => {
-    const errorMessage = ts.flattenDiagnosticMessageText(
-      error.messageText,
-      "\n"
-    );
-    logger.error(errorMessage);
-  });
+if (command) {
+  const commandProcess = spawn("npm", ["run", command]);
+  commandProcess.stdout.pipe(process.stdout);
+  commandProcess.stderr.pipe(process.stderr);
 }
-
-export { handleErrors };
