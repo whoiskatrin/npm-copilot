@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from "child_process";
+import { logger } from "./src/logger.js";
 import { handleErrors } from "./src/error-analyzer.js";
 
 const command = process.argv.slice(2);
@@ -15,7 +16,7 @@ childProcess.stderr.on("data", async (data) => {
   const errorMsg = data.toString();
   const suggestion = await handleErrors(errorMsg);
   if (suggestion) {
-    console.log(suggestion);
+    logger.log("Suggested fix: " + suggestion);
   }
 });
 
