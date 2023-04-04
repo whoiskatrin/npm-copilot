@@ -16,9 +16,11 @@ tail.stdout.on("data", async (data) => {
     buffer += chunk;
     const lines = buffer.split("\n");
     buffer = lines.pop();
+    console.log(lines);
 
     for (const line of lines) {
       try {
+        console.log("line :" + line);
         const suggestion = await handleErrors(line);
         if (suggestion) {
           const term = spawn("gnome-terminal");
