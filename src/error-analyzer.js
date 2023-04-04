@@ -6,11 +6,13 @@ const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
 async function handleErrors(logData) {
+  console.log("logData: " + logData);
   const errorLines = logData
     .toString()
     .split("\n")
     .filter((line) => line.trim().startsWith("Error:"));
 
+  console.log("errorLines: " + errorLines);
   if (errorLines.length === 0) {
     return undefined;
   }

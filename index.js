@@ -14,7 +14,7 @@ childProcess.stderr.pipe(process.stderr);
 
 logger.on("data", async (data) => {
   try {
-    const suggestion = await handleErrors(data);
+    const suggestion = await handleErrors(data.toString());
     if (suggestion) {
       console.log(suggestion);
     }
