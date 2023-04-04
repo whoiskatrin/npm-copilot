@@ -34,60 +34,56 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
-  try {
-    if (typeof logData !== "string" || !logData.trim()) {
-      return undefined;
-    }
-
-    const errorLines = logData
-      .split("\n")
-      .filter((line) => line.trim().startsWith("Error:"));
-
-    if (errorLines.length === 0) {
-      return undefined;
-    }
-
-    const errorMessages = errorLines.map((line) => {
-      const message = line.trim().substring("Error:".length).trim();
-      const match = message.match(/^(.*)\s+\((.*):(\d+):(\d+)\)/);
-      if (match) {
-        const [_, errorMessage, fileName, lineNumber, columnNumber] = match;
-        return { errorMessage, fileName, lineNumber, columnNumber };
-      } else {
-        return { errorMessage: message };
-      }
-    });
-
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${openaiApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: `Fix the following error:\n\n${errorMessages[0].errorMessage}\n\nSuggested fix:`,
-        model: "text-davinci-002",
-        temperature: 0.5,
-        max_tokens: 147,
-        top_p: 1,
-        stop: "\\n",
-        best_of: 2,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      }),
-    };
-
-    const response = await fetch(OPENAI_ENDPOINT, options);
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Error fetching a fix.");
-    }
-
-    return data.choices[0].text.trim();
-  } catch (error) {
-    logger.error(error.message);
+  if (typeof logData !== "string" || !logData.trim()) {
+    return undefined;
   }
+
+  const errorLines = logData
+    .split("\n")
+    .filter((line) => line.trim().startsWith("Error:"));
+
+  if (errorLines.length === 0) {
+    return undefined;
+  }
+
+  const errorMessages = errorLines.map((line) => {
+    const message = line.trim().substring("Error:".length).trim();
+    const match = message.match(/^(.*)\s+\((.*):(\d+):(\d+)\)/);
+    if (match) {
+      const [_, errorMessage, fileName, lineNumber, columnNumber] = match;
+      return { errorMessage, fileName, lineNumber, columnNumber };
+    } else {
+      return { errorMessage: message };
+    }
+  });
+
+  const options = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${openaiApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: `Fix the following error:\n\n${errorMessages[0].errorMessage}\n\nSuggested fix:`,
+      model: "text-davinci-002",
+      temperature: 0.5,
+      max_tokens: 147,
+      top_p: 1,
+      stop: "\\n",
+      best_of: 2,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    }),
+  };
+
+  const response = await fetch(OPENAI_ENDPOINT, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Error fetching a fix.");
+  }
+
+  return data.choices[0].text.trim();
 }
 
 export { handleErrors };
