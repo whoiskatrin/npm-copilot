@@ -30,13 +30,14 @@ tail.stdout.on("data", async (data) => {
 
 async function handleErrors(logData) {
   try {
-    const { level, message } = JSON.parse(logData);
+    const errorPattern = /\[error\](.*)/i;
+    const match = logData.match(errorPattern);
 
-    if (level !== "error") {
-      return undefined; // Add a return statement here
+    if (!match) {
+      return undefined;
     }
 
-    const errorMessage = message;
+    const errorMessage = match[1].trim();
     const options = {
       method: "POST",
       headers: {
