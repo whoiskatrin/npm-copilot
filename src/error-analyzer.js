@@ -34,21 +34,30 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
-  console.log("logdata" + logData);
   try {
     if (typeof logData !== "string" || !logData.trim()) {
-      console.log("log data is undefined");
       return undefined;
     }
 
-    const errorMessage = logData.trim();
-    const match = errorMessage.match(/^Error:\s(.*)$/i);
+    const errorLines = logData
+      .split("\n")
+      .filter((line) => line.trim().startsWith("Error:"));
 
-    if (!match) {
+    if (errorLines.length === 0) {
       return undefined;
     }
 
-    const { 1: message } = match;
+    const errorMessages = errorLines.map((line) => {
+      const message = line.trim().substring("Error:".length).trim();
+      const match = message.match(/^(.*)\s+\((.*):(\d+):(\d+)\)/);
+      if (match) {
+        const [_, errorMessage, fileName, lineNumber, columnNumber] = match;
+        return { errorMessage, fileName, lineNumber, columnNumber };
+      } else {
+        return { errorMessage: message };
+      }
+    });
+
     const options = {
       method: "POST",
       headers: {
@@ -56,7 +65,7 @@ async function handleErrors(logData) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: `Fix the following error:\n\n${message}\n\nSuggested fix:`,
+        prompt: `Fix the following error:\n\n${errorMessages[0].errorMessage}\n\nSuggested fix:`,
         model: "text-davinci-002",
         temperature: 0.5,
         max_tokens: 147,

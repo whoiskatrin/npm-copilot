@@ -7,7 +7,7 @@ const logFormatter = format.printf((info) => {
 });
 
 const logger = createLogger({
-  levels: "info",
+  levels: { info: 0 },
   format: format.errors({ stack: true }),
   transports: [
     new transports.Console({
