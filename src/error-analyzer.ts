@@ -5,8 +5,23 @@ dotenv.config();
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
-async function handleErrors(logData) {
+async function handleErrors(logData: String) {
   console.log("logData: " + logData);
+
+  const errorKeywords = [
+    "Error:",
+    "UnhandledPromiseRejectionWarning:",
+    "Uncaught",
+    "Next.js",
+  ];
+
+  // Check if the log data contains any of the error keywords
+  const isError = errorKeywords.some((keyword) => logData.includes(keyword));
+
+  if (!isError) {
+    return undefined;
+  }
+
   const errorLines = logData
     .toString()
     .split("\n")
