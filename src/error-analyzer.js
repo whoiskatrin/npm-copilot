@@ -1,37 +1,9 @@
 import dotenv from "dotenv";
-import logger from "./logger.js";
-import { spawn } from "child_process";
 
 dotenv.config();
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
-
-const tail = spawn("tail", ["-f", "path/to/your/log/file"]);
-
-tail.stdout.on("data", async (data) => {
-  const chunks = data.toString().split("\n");
-  let buffer = "";
-  for (const chunk of chunks) {
-    buffer += chunk;
-    const lines = buffer.split("\n");
-    buffer = lines.pop();
-    console.log("lines" + lines);
-
-    for (const line of lines) {
-      try {
-        console.log("line :" + line);
-        const suggestion = await handleErrors(line);
-        if (suggestion) {
-          const term = spawn("gnome-terminal");
-          term.stdin.write(suggestion);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }
-});
 
 async function handleErrors(logData) {
   const errorLines = logData
