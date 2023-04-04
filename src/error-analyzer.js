@@ -5,7 +5,7 @@ dotenv.config();
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
-async function handleErrors(logData: String) {
+async function handleErrors(logData) {
   console.log("logData: " + logData);
 
   const errorKeywords = [

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from "child_process";
-import { handleErrors } from "./error-analyzer.js";
+import { handleErrors } from "./src/error-analyzer";
 
 const command = process.argv.slice(2);
 const childProcess = spawn("npm", ["run", "dev"], {
