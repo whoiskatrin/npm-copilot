@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import yargs from "yargs-parser";
 import logger from "./logger.js";
 import { spawn } from "child_process";
 
@@ -28,6 +27,7 @@ tail.stdout.on("data", async (data) => {
 async function handleErrors(logData) {
   try {
     if (typeof logData !== "string" || !logData.trim()) {
+      console.log("log data is undefined");
       return undefined;
     }
 
