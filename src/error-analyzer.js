@@ -30,34 +30,49 @@ tail.stdout.on("data", async (data) => {
 });
 
 async function handleErrors(logData) {
-  const errorMessage = logData.trim();
-  const options = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${openaiApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
-      model: "text-davinci-002",
-      temperature: 0.5,
-      max_tokens: 147,
-      top_p: 1,
-      stop: "\\n",
-      best_of: 2,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    }),
-  };
+  try {
+    if (typeof logData !== "string" || !logData.trim()) {
+      return undefined;
+    }
 
-  const response = await fetch(OPENAI_ENDPOINT, options);
+    const trimmedLogData = logData.trim();
+    const { level, message } = JSON.parse(trimmedLogData);
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error || "Error fetching a fix.");
+    if (level !== "error") {
+      return undefined;
+    }
+
+    const errorMessage = message;
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
+        model: "text-davinci-002",
+        temperature: 0.5,
+        max_tokens: 147,
+        top_p: 1,
+        stop: "\\n",
+        best_of: 2,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      }),
+    };
+
+    const response = await fetch(OPENAI_ENDPOINT, options);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error fetching a fix.");
+    }
+
+    return data.choices[0].text.trim();
+  } catch (error) {
+    logger.error(error.message);
   }
-
-  return data.choices[0].text.trim();
 }
 
 export { handleErrors };
