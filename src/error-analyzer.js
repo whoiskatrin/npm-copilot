@@ -22,7 +22,7 @@ async function handleErrors(logData) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      prompt: `Fix the following error:\n\n${errorMessage}\n\nSuggested fix:`,
+      prompt: `Fix the following error:\n\n${errorMessage}\n\n`,
       model: "text-davinci-003",
       temperature: 0.5,
       max_tokens: 256,
@@ -36,7 +36,6 @@ async function handleErrors(logData) {
 
   const response = await fetch(OPENAI_ENDPOINT, options);
   const data = await response.json();
-  console.log(prompt);
 
   if (!response.ok) {
     throw new Error(data.error || "Error fetching a fix.");
