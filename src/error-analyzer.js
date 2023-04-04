@@ -10,18 +10,23 @@ const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 const tail = spawn("tail", ["-f", "path/to/your/log/file"]);
 
 tail.stdout.on("data", async (data) => {
-  const lines = data.toString().split("\n");
-  for (const line of lines) {
-    try {
-      console.log(line.toString());
-      const suggestion = await handleErrors(line.toString());
-      console.log(suggestion);
-      if (suggestion) {
-        const term = spawn("gnome-terminal");
-        term.stdin.write(suggestion);
+  const chunks = data.toString().split("\n");
+  let buffer = "";
+  for (const chunk of chunks) {
+    buffer += chunk;
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+
+    for (const line of lines) {
+      try {
+        const suggestion = await handleErrors(line);
+        if (suggestion) {
+          const term = spawn("gnome-terminal");
+          term.stdin.write(suggestion);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
   }
 });
