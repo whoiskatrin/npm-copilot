@@ -11,13 +11,11 @@ const tail = spawn("tail", ["-f", "path/to/your/log/file"]);
 
 tail.stdout.on("data", async (data) => {
   const lines = data.toString().split("\n");
-  console.log(lines);
   for (const line of lines) {
     try {
-      if (typeof line !== "string") {
-        continue;
-      }
-      const suggestion = await handleErrors(line);
+      console.log(line.toString());
+      const suggestion = await handleErrors(line.toString());
+      console.log(suggestion);
       if (suggestion) {
         const term = spawn("gnome-terminal");
         term.stdin.write(suggestion);
