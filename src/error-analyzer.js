@@ -14,8 +14,10 @@ tail.stdout.on("data", async (data) => {
   const lines = data.toString().split("\n");
   for (const line of lines) {
     try {
-      if (line.includes("error")) {
-        const suggestion = await handleErrors(line);
+      const trimmedLine = typeof line === "string" ? line.trim() : line;
+      const { level, message } = JSON.parse(trimmedLine);
+      if (level === "error") {
+        const suggestion = await handleErrors(message);
         if (suggestion) {
           const term = spawn("gnome-terminal");
           term.stdin.write(suggestion);
