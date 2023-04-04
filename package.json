@@ -19,7 +19,7 @@
     "yargs-parser": "^21.1.1"
   },
   "name": "npm-copilot",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

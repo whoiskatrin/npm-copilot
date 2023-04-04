@@ -38,9 +38,12 @@ async function handleErrors(logData) {
     return undefined;
   }
 
+  console.log("logData " + logData);
   const errorLines = logData
     .split("\n")
     .filter((line) => line.trim().startsWith("Error:"));
+
+  console.log("errorLines " + errorLines);
 
   if (errorLines.length === 0) {
     return undefined;
