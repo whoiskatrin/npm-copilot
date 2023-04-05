@@ -24,7 +24,8 @@ childProcess.stderr.on("data", async (data) => {
   const errorMsg = data.toString();
   const suggestion = await handleErrors(errorMsg);
   if (suggestion) {
-    console.log(chalk.green("Suggested fix: " + suggestion));
+    console.log(chalk.greenBright("Suggested fix:"));
+    console.log(suggestion);
   } else {
     const logType = errorMsg.match(/^\w+/);
     console.log(colors[logType] + errorMsg + "\x1b[0m");
@@ -35,7 +36,8 @@ childProcess.stdout.on("data", async (data) => {
   const errorMsg = data.toString();
   const suggestion = await handleErrors(errorMsg);
   if (suggestion) {
-    console.log(chalk.green("Suggested fix: " + suggestion));
+    console.log(chalk.greenBright("Suggested fix:"));
+    console.log(suggestion);
   } else {
     const logType = errorMsg.match(/^\w+/);
     console.log(colors[logType] + errorMsg + "\x1b[0m");
