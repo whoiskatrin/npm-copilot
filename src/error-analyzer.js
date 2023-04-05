@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
-const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
+const OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions";
 
 async function handleErrors(logData) {
   const errorPattern = /Error:([\s\S]+?)\n\n/;
@@ -23,7 +23,7 @@ async function handleErrors(logData) {
     },
     body: JSON.stringify({
       prompt: `Fix the following error:\n\n${errorMessage}\n\n`,
-      model: "text-davinci-003",
+      model: "gpt-3.5-turbo",
       temperature: 0.5,
       max_tokens: 256,
       top_p: 1,
