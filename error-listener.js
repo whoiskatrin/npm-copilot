@@ -32,16 +32,10 @@ childProcess.stderr.on("data", async (data) => {
   }
 });
 
-childProcess.stdout.on("data", async (data) => {
-  const errorMsg = data.toString();
-  const suggestion = await handleErrors(errorMsg);
-  if (suggestion) {
-    console.log(chalk.greenBright("Suggested fix:"));
-    console.log(suggestion);
-  } else {
-    const logType = errorMsg.match(/^\w+/);
-    console.log(colors[logType] + errorMsg + "\x1b[0m");
-  }
+childProcess.stdout.on("data", (data) => {
+  const logMsg = data.toString();
+  const logType = logMsg.match(/^\w+/);
+  console.log(colors[logType] + logMsg + "\x1b[0m");
 });
 
 childProcess.on("exit", () => {
