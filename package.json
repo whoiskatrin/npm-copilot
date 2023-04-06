@@ -16,10 +16,11 @@
     "node-fetch": "^3.3.1",
     "path": "^0.12.7",
     "winston": "^3.8.2",
+    "yargs": "^17.7.1",
     "yargs-parser": "^21.1.1"
   },
   "name": "npm-copilot",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

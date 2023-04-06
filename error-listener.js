@@ -13,32 +13,26 @@ async function getProjectType() {
     const packageJsonData = await fs.readFile(packageJsonPath, "utf-8");
     const packageJson = JSON.parse(packageJsonData);
 
-    if (packageJson.dependencies && packageJson.dependencies.next) {
+    const deps = packageJson.dependencies ?? {};
+    const devDeps = packageJson.devDependencies ?? {};
+
+    if (deps.next) {
       return "next";
-    } else if (
-      (packageJson.dependencies && packageJson.dependencies["react-scripts"]) ||
-      (packageJson.devDependencies &&
-        packageJson.devDependencies["react-scripts"])
-    ) {
+    } else if (deps["react-scripts"] || devDeps["react-scripts"]) {
       return "react";
-    } else if (
-      (packageJson.dependencies && packageJson.dependencies["@angular/cli"]) ||
-      (packageJson.devDependencies &&
-        packageJson.devDependencies["@angular/cli"])
-    ) {
+    } else if (deps["@angular/cli"] || devDeps["@angular/cli"]) {
       return "angular";
-    } else if (
-      (packageJson.dependencies &&
-        packageJson.dependencies["@vue/cli-service"]) ||
-      (packageJson.devDependencies &&
-        packageJson.devDependencies["@vue/cli-service"])
-    ) {
+    } else if (deps["@vue/cli-service"] || devDeps["@vue/cli-service"]) {
       return "vue";
     } else {
       return null;
     }
   } catch (error) {
-    console.error("Error reading package.json:", error);
+    if (error.code === "ENOENT") {
+      console.error("Error: package.json not found in the current directory.");
+    } else {
+      console.error("Error reading package.json:", error);
+    }
     return null;
   }
 }
@@ -56,6 +50,7 @@ function getPackageManager() {
     }
   }
 }
+
 const projectType = await getProjectType();
 const devCommandMap = {
   next: "dev",
@@ -90,8 +85,10 @@ childProcess.stderr.on("data", async (data) => {
   const errorMsg = data.toString();
   const suggestion = await handleErrors(errorMsg, projectType);
   if (suggestion) {
+    console.log(chalk.yellowBright("Issue:"));
+    console.log(suggestion.description);
     console.log(chalk.greenBright("Suggested fix:"));
-    console.log(suggestion);
+    console.log(suggestion.fix);
   } else {
     const logType = errorMsg.match(/^\w+/);
     console.log(colors[logType] + errorMsg + "\x1b[0m");

@@ -22,7 +22,7 @@ async function handleErrors(logData, projectType) {
 
   const errorMessage = errorMatch[1].trim();
 
-  const prompt = `Fix the following ${projectType} error:\n\n${errorMessage}\n\n`;
+  const prompt = `Describe and fix the following ${projectType} error:\n\n${errorMessage}\n\nDescription: {description}\nFix: {fix}\n`;
 
   const options = {
     method: "POST",
@@ -50,7 +50,19 @@ async function handleErrors(logData, projectType) {
     throw new Error(data.error || "Error fetching a fix.");
   }
 
-  return data.choices[0].text.trim();
+  const resultText = data.choices[0].text.trim();
+  const resultMatch = resultText.match(
+    /Description: (?<description>.*?)\nFix: (?<fix>.*)/
+  );
+
+  if (!resultMatch) {
+    return undefined;
+  }
+
+  return {
+    description: resultMatch.groups.description,
+    fix: resultMatch.groups.fix,
+  };
 }
 
 export { handleErrors };
