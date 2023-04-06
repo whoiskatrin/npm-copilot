@@ -1,6 +1,6 @@
-# npm-copilot
+# npm-copilot / yarn-copilot / pnpm-copilot
 
-npm-copilot is a command-line tool that uses OpenAI's GPT-3 language model to provide suggestions for fixing errors in your code.
+npm/yarn/pnpm -copilot is a command-line tool that uses OpenAI's GPT-3 language model to provide suggestions for fixing errors in your code.
 
 <div align="center">
     <img src="https://github.com/whoiskatrin/npm-copilot/blob/main/example.png" width="600" />
