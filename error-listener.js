@@ -49,6 +49,24 @@ function getProjectType() {
   }
 }
 
+const projectType = getProjectType();
+const devCommandMap = {
+  next: "dev",
+  react: "start",
+  angular: "serve",
+  vue: "serve",
+};
+const devCommand = devCommandMap[projectType];
+
+if (!devCommand) {
+  console.error("Error: Unsupported project type.");
+  process.exit(1);
+}
+
+const childProcess = spawn(packageManager, ["run", devCommand], {
+  stdio: ["pipe", "pipe", "pipe"],
+});
+
 const command = process.argv.slice(2);
 const packageManager = getPackageManager();
 
@@ -65,7 +83,7 @@ const colors = {
 
 childProcess.stderr.on("data", async (data) => {
   const errorMsg = data.toString();
-  const suggestion = await handleErrors(errorMsg, getProjectType());
+  const suggestion = await handleErrors(errorMsg, projectType);
   if (suggestion) {
     console.log(chalk.greenBright("Suggested fix:"));
     console.log(suggestion);
