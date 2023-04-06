@@ -86,6 +86,7 @@ async function getPackageManager() {
     const errorMsg = data.toString();
     try {
       const suggestion = await handleErrors(errorMsg, projectType || "generic"); // something isn't working well here
+      if (suggestion) {
         console.log(chalk.yellowBright("Issue:"));
         console.log(suggestion.description);
         console.log(chalk.greenBright("Suggested fix:"));
