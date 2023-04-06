@@ -17,7 +17,7 @@ async function getProjectType() {
     const devDeps = packageJson.devDependencies ?? {};
 
     if (deps.next) {
-      return "next.js";
+      return "next";
     } else if (deps["react-scripts"] || devDeps["react-scripts"]) {
       return "react";
     } else if (deps["@angular/cli"] || devDeps["@angular/cli"]) {
