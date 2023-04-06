@@ -6,6 +6,43 @@ import { spawn } from "child_process";
 import { handleErrors } from "./src/error-analyzer.js";
 import chalk from "chalk";
 
+async function getProjectType() {
+  const packageJsonPath = path.join(process.cwd(), "package.json");
+
+  try {
+    const packageJsonData = await fs.readFile(packageJsonPath, "utf-8");
+    const packageJson = JSON.parse(packageJsonData);
+
+    if (packageJson.dependencies && packageJson.dependencies.next) {
+      return "next";
+    } else if (
+      (packageJson.dependencies && packageJson.dependencies["react-scripts"]) ||
+      (packageJson.devDependencies &&
+        packageJson.devDependencies["react-scripts"])
+    ) {
+      return "react";
+    } else if (
+      (packageJson.dependencies && packageJson.dependencies["@angular/cli"]) ||
+      (packageJson.devDependencies &&
+        packageJson.devDependencies["@angular/cli"])
+    ) {
+      return "angular";
+    } else if (
+      (packageJson.dependencies &&
+        packageJson.dependencies["@vue/cli-service"]) ||
+      (packageJson.devDependencies &&
+        packageJson.devDependencies["@vue/cli-service"])
+    ) {
+      return "vue";
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error reading package.json:", error);
+    return null;
+  }
+}
+
 function getPackageManager() {
   try {
     fs.readFileSync(path.join(process.cwd(), "yarn.lock"), "utf8");
@@ -17,35 +54,6 @@ function getPackageManager() {
     } catch (error) {
       return "npm";
     }
-  }
-}
-
-function getProjectType() {
-  const packageJsonPath = path.join(process.cwd(), "package.json");
-  const packageJson = require(packageJsonPath);
-
-  if (packageJson.dependencies && packageJson.dependencies.next) {
-    return "next";
-  } else if (
-    (packageJson.dependencies && packageJson.dependencies["react-scripts"]) ||
-    (packageJson.devDependencies &&
-      packageJson.devDependencies["react-scripts"])
-  ) {
-    return "react";
-  } else if (
-    (packageJson.dependencies && packageJson.dependencies["@angular/cli"]) ||
-    (packageJson.devDependencies && packageJson.devDependencies["@angular/cli"])
-  ) {
-    return "angular";
-  } else if (
-    (packageJson.dependencies &&
-      packageJson.dependencies["@vue/cli-service"]) ||
-    (packageJson.devDependencies &&
-      packageJson.devDependencies["@vue/cli-service"])
-  ) {
-    return "vue";
-  } else {
-    return null;
   }
 }
 
