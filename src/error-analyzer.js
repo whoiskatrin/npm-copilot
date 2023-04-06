@@ -7,6 +7,7 @@ const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
 async function handleErrors(logData, projectType) {
+  console.log("entered");
   const errorPatterns = {
     next: /Error:([\s\S]+?)\n\n/,
     react: /Error:([\s\S]+?)\n\n/,
@@ -16,6 +17,7 @@ async function handleErrors(logData, projectType) {
   };
 
   const errorPattern = errorPatterns[projectType];
+  console.log("matching");
   const errorMatch = logData.match(errorPattern);
   if (!errorMatch) {
     return undefined;
@@ -24,7 +26,7 @@ async function handleErrors(logData, projectType) {
   const errorMessage = errorMatch[1].trim();
 
   const prompt = `Describe and fix the following ${projectType} error:\n\n${errorMessage}\n\nDescription: {description}\nFix: {fix}\n`;
-
+  console.log(prompt);
   const options = {
     method: "POST",
     headers: {
