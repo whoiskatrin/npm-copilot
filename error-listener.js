@@ -56,7 +56,6 @@ function getPackageManager() {
     }
   }
 }
-
 const projectType = await getProjectType();
 const devCommandMap = {
   next: "dev",
@@ -71,12 +70,10 @@ if (!devCommand) {
   process.exit(1);
 }
 
+const packageManager = getPackageManager();
 const childProcess = spawn(packageManager, ["run", devCommand], {
   stdio: ["pipe", "pipe", "pipe"],
 });
-
-const command = process.argv.slice(2);
-const packageManager = getPackageManager();
 
 childProcess.stdout.pipe(process.stdout);
 childProcess.stderr.pipe(process.stderr);
