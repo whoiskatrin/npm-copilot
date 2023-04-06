@@ -52,7 +52,6 @@ async function getPackageManager() {
 }
 
 (async () => {
-  // Wrap the following code inside an async function
   const projectType = await getProjectType();
   const devCommandMap = {
     next: "dev",
@@ -86,8 +85,7 @@ async function getPackageManager() {
   childProcess.stderr.on("data", async (data) => {
     const errorMsg = data.toString();
     try {
-      const suggestion = await handleErrors(errorMsg, projectType);
-      if (suggestion) {
+      const suggestion = await handleErrors(errorMsg, projectType || "generic"); // something isn't working well here
         console.log(chalk.yellowBright("Issue:"));
         console.log(suggestion.description);
         console.log(chalk.greenBright("Suggested fix:"));

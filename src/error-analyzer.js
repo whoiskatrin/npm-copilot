@@ -12,6 +12,7 @@ async function handleErrors(logData, projectType) {
     react: /Error:([\s\S]+?)\n\n/,
     angular: /ERROR in([\s\S]+?)\n\n/,
     vue: /error[\s\S]+?\n([\s\S]+?)\n\n/,
+    generic: /error[\s\S]+?\n([\s\S]+?)\n/i,
   };
 
   const errorPattern = errorPatterns[projectType];
