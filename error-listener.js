@@ -51,60 +51,63 @@ async function getPackageManager() {
   }
 }
 
-const projectType = await getProjectType();
-const devCommandMap = {
-  next: "dev",
-  react: "start",
-  angular: "serve",
-  vue: "serve",
-};
-const devCommand = devCommandMap[projectType];
+(async () => {
+  // Wrap the following code inside an async function
+  const projectType = await getProjectType();
+  const devCommandMap = {
+    next: "dev",
+    react: "start",
+    angular: "serve",
+    vue: "serve",
+  };
+  const devCommand = devCommandMap[projectType];
 
-if (!devCommand) {
-  console.error("Error: Unsupported project type.");
-  process.exit(1);
-}
-
-const packageManager = getPackageManager();
-const childProcess = spawn(packageManager, ["run", devCommand], {
-  stdio: ["pipe", "pipe", "pipe"],
-});
-
-childProcess.stdout.pipe(process.stdout);
-childProcess.stderr.pipe(process.stderr);
-
-const colors = {
-  ready: "\u001b[32m",
-  event: "\u001b[34m",
-  warn: "\u001b[33m",
-  wait: "\u001b[36m",
-  error: "\u001b[31m",
-};
-
-childProcess.stderr.on("data", async (data) => {
-  const errorMsg = data.toString();
-  try {
-    const suggestion = await handleErrors(errorMsg, projectType);
-    if (suggestion) {
-      console.log(chalk.yellowBright("Issue:"));
-      console.log(suggestion.description);
-      console.log(chalk.greenBright("Suggested fix:"));
-      console.log(suggestion.fix);
-    } else {
-      const logType = errorMsg.match(/^\w+/);
-      console.log(colors[logType] + errorMsg + "\x1b[0m");
-    }
-  } catch (error) {
-    console.error("Error fetching suggestion:", error.message);
+  if (!devCommand) {
+    console.error("Error: Unsupported project type.");
+    process.exit(1);
   }
-});
 
-childProcess.stdout.on("data", (data) => {
-  const logMsg = data.toString();
-  const logType = logMsg.match(/^\w+/);
-  console.log(colors[logType] + logMsg + "\x1b[0m");
-});
+  const packageManager = await getPackageManager();
+  const childProcess = spawn(packageManager, ["run", devCommand], {
+    stdio: ["pipe", "pipe", "pipe"],
+  });
 
-childProcess.on("exit", () => {
-  console.log("Development server process exited.");
-});
+  childProcess.stdout.pipe(process.stdout);
+  childProcess.stderr.pipe(process.stderr);
+
+  const colors = {
+    ready: "\u001b[32m",
+    event: "\u001b[34m",
+    warn: "\u001b[33m",
+    wait: "\u001b[36m",
+    error: "\u001b[31m",
+  };
+
+  childProcess.stderr.on("data", async (data) => {
+    const errorMsg = data.toString();
+    try {
+      const suggestion = await handleErrors(errorMsg, projectType);
+      if (suggestion) {
+        console.log(chalk.yellowBright("Issue:"));
+        console.log(suggestion.description);
+        console.log(chalk.greenBright("Suggested fix:"));
+        console.log(suggestion.fix);
+      } else {
+        const logType = errorMsg.match(/^\w+/);
+        console.log(colors[logType] + errorMsg + "\x1b[0m");
+      }
+    } catch (error) {
+      console.error("Error fetching suggestion:", error.message);
+    }
+  });
+
+  childProcess.stdout.on("data", (data) => {
+    const logMsg = data.toString();
+    const logType = logMsg.match(/^\w+/);
+    console.log(colors[logType] + logMsg + "\x1b[0m");
+  });
+
+  childProcess.on("exit", () => {
+    console.log("Development server process exited.");
+  });
+})();
