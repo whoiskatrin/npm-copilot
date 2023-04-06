@@ -58,6 +58,8 @@ async function handleErrors(logData, projectType) {
   if (!resultMatch) {
     return undefined;
   }
+  console.log(data);
+  console.log(resultMatch.groups.fix);
 
   return {
     description: resultMatch.groups.description,
