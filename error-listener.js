@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 import { spawn } from "child_process";
 import { handleErrors } from "./src/error-analyzer.js";
