@@ -45,6 +45,7 @@ async function handleErrors(logData, projectType) {
 
   const response = await fetch(OPENAI_ENDPOINT, options);
   const data = await response.json();
+  console.log(data);
 
   if (!response.ok) {
     throw new Error(data.error || "Error fetching a fix.");
