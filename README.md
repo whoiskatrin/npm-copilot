@@ -6,6 +6,13 @@ npm/yarn/pnpm -copilot is a command-line tool that uses OpenAI's GPT-3 language 
     <img src="https://github.com/whoiskatrin/npm-copilot/blob/main/example.png" width="600" />
 </div>
 
+## Frameworks:
+
+- Next.js
+- React
+- Angular
+- Vue.js
+
 ## Usage
 
 The CLI tool will need to be running while the Next.js application is running with `npm run dev` or `npm start`. This will allow the CLI tool to capture the logs in real-time and provide suggestions for error fixes as they occur.

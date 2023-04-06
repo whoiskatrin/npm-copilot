@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -5,15 +6,23 @@ dotenv.config();
 const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
-async function handleErrors(logData) {
-  const errorPattern = /Error:([\s\S]+?)\n\n/;
+async function handleErrors(logData, projectType) {
+  const errorPatterns = {
+    next: /Error:([\s\S]+?)\n\n/,
+    react: /Error:([\s\S]+?)\n\n/,
+    angular: /ERROR in([\s\S]+?)\n\n/,
+    vue: /error[\s\S]+?\n([\s\S]+?)\n\n/,
+  };
 
+  const errorPattern = errorPatterns[projectType];
   const errorMatch = logData.match(errorPattern);
   if (!errorMatch) {
     return undefined;
   }
 
   const errorMessage = errorMatch[1].trim();
+
+  const prompt = `Fix the following ${projectType} error:\n\n${errorMessage}\n\n`;
 
   const options = {
     method: "POST",
@@ -22,7 +31,7 @@ async function handleErrors(logData) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      prompt: `Fix the following error:\n\n${errorMessage}\n\n`,
+      prompt: prompt,
       model: "text-davinci-003",
       temperature: 0.5,
       max_tokens: 256,
