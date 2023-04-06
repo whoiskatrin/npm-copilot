@@ -17,7 +17,7 @@ async function getProjectType() {
     const devDeps = packageJson.devDependencies ?? {};
 
     if (deps.next) {
-      return "next";
+      return "next.js";
     } else if (deps["react-scripts"] || devDeps["react-scripts"]) {
       return "react";
     } else if (deps["@angular/cli"] || devDeps["@angular/cli"]) {
@@ -85,7 +85,6 @@ async function getPackageManager() {
   childProcess.stderr.on("data", async (data) => {
     const errorMsg = data.toString();
     try {
-      console.log("trying");
       const suggestion = await handleErrors(errorMsg, projectType || "generic"); // something isn't working well here
       if (suggestion) {
         console.log(chalk.yellowBright("Issue:"));
