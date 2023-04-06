@@ -1,11 +1,28 @@
 #!/usr/bin/env node
 
+import fs from 'fs';
+import path from 'path';
 import { spawn } from "child_process";
 import { handleErrors } from "./src/error-analyzer.js";
 import chalk from "chalk";
 
+function getPackageManager() {
+  try {
+    fs.readFileSync(path.join(process.cwd(), 'yarn.lock'), 'utf8');
+    return 'yarn';
+  } catch (error) {
+    try {
+      fs.readFileSync(path.join(process.cwd(), 'pnpm-lock.yaml'), 'utf8');
+      return 'pnpm';
+    } catch (error) {
+      return 'npm';
+    }
+  }
+}
+
 const command = process.argv.slice(2);
-const childProcess = spawn("npm", ["run", "dev"], {
+const packageManager = getPackageManager();
+const childProcess = spawn(packageManager, ["run", "dev"], {
   stdio: ["pipe", "pipe", "pipe"],
 });
 
