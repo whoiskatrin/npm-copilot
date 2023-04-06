@@ -10,7 +10,10 @@ async function getProjectType() {
   const packageJsonPath = path.join(process.cwd(), "package.json");
 
   try {
-    const packageJsonData = await fs.readFile(packageJsonPath, "utf-8");
+    const packageJsonData = await fs.promises.readFile(
+      packageJsonPath,
+      "utf-8"
+    );
     const packageJson = JSON.parse(packageJsonData);
 
     if (packageJson.dependencies && packageJson.dependencies.next) {
