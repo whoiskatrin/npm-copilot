@@ -13,6 +13,7 @@
     "fs": "^0.0.1-security",
     "i": "^0.3.7",
     "node": "^19.8.1",
+    "node-fetch": "^3.3.1",
     "path": "^0.12.7",
     "winston": "^3.8.2",
     "yargs-parser": "^21.1.1"
