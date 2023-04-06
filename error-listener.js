@@ -37,13 +37,13 @@ async function getProjectType() {
   }
 }
 
-function getPackageManager() {
+async function getPackageManager() {
   try {
-    fs.readFileSync(path.join(process.cwd(), "yarn.lock"), "utf8");
+    await fs.readFile(path.join(process.cwd(), "yarn.lock"), "utf8");
     return "yarn";
   } catch (error) {
     try {
-      fs.readFileSync(path.join(process.cwd(), "pnpm-lock.yaml"), "utf8");
+      await fs.readFile(path.join(process.cwd(), "pnpm-lock.yaml"), "utf8");
       return "pnpm";
     } catch (error) {
       return "npm";
@@ -83,15 +83,19 @@ const colors = {
 
 childProcess.stderr.on("data", async (data) => {
   const errorMsg = data.toString();
-  const suggestion = await handleErrors(errorMsg, projectType);
-  if (suggestion) {
-    console.log(chalk.yellowBright("Issue:"));
-    console.log(suggestion.description);
-    console.log(chalk.greenBright("Suggested fix:"));
-    console.log(suggestion.fix);
-  } else {
-    const logType = errorMsg.match(/^\w+/);
-    console.log(colors[logType] + errorMsg + "\x1b[0m");
+  try {
+    const suggestion = await handleErrors(errorMsg, projectType);
+    if (suggestion) {
+      console.log(chalk.yellowBright("Issue:"));
+      console.log(suggestion.description);
+      console.log(chalk.greenBright("Suggested fix:"));
+      console.log(suggestion.fix);
+    } else {
+      const logType = errorMsg.match(/^\w+/);
+      console.log(colors[logType] + errorMsg + "\x1b[0m");
+    }
+  } catch (error) {
+    console.error("Error fetching suggestion:", error.message);
   }
 });
 
