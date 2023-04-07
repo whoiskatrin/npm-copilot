@@ -61,7 +61,7 @@ async function getPackageManager() {
   if (!openaiApiKey) {
     console.error(
       chalk.yellow(
-        '\nError: "OPENAI_API_KEY" environment variable not set! Please set it to your .env file.\n'
+        '\nError: "OPENAI_API_KEY" environment variable is not set! Please set it in your .env file.\n'
       )
     );
     process.exit(1);
