@@ -1,12 +1,8 @@
 import fetch from "node-fetch";
-import dotenv from "dotenv";
 
-dotenv.config();
-
-const openaiApiKey = process.env.OPENAI_API_KEY;
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/completions";
 
-async function handleErrors(logData, projectType) {
+async function handleErrors(logData, projectType = "generic", openaiApiKey) {
   const errorPatterns = {
     next: /Error:([\s\S]+?)\n\n/,
     react: /Error:([\s\S]+?)\n\n/,

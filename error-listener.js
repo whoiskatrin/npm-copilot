@@ -5,6 +5,9 @@ import path from "path";
 import { spawn } from "child_process";
 import { handleErrors } from "./src/error-analyzer.js";
 import chalk from "chalk";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 async function getProjectType() {
   const packageJsonPath = path.join(process.cwd(), "package.json");
@@ -52,6 +55,18 @@ async function getPackageManager() {
 }
 
 (async () => {
+  // Validations
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+
+  if (!openaiApiKey) {
+    console.error(
+      chalk.yellow(
+        '\nError: "OPENAI_API_KEY" environment variable not set! Please set it to your .env file.\n'
+      )
+    );
+    process.exit(1);
+  }
+
   const projectType = await getProjectType();
   const devCommandMap = {
     next: "dev",
@@ -85,25 +100,20 @@ async function getPackageManager() {
   childProcess.stderr.on("data", async (data) => {
     const errorMsg = data.toString();
     try {
-      const suggestion = await handleErrors(errorMsg, projectType || "generic"); // something isn't working well here
+      const suggestion = await handleErrors(
+        errorMsg,
+        projectType,
+        openaiApiKey
+      ); // something isn't working well here
       if (suggestion) {
         console.log(chalk.yellowBright("Issue:"));
         console.log(suggestion.description);
         console.log(chalk.greenBright("Suggested fix:"));
         console.log(suggestion.fix);
-      } else {
-        const logType = errorMsg.match(/^\w+/);
-        console.log(colors[logType] + errorMsg + "\x1b[0m");
       }
     } catch (error) {
       console.error("Error fetching suggestion:", error.message);
     }
-  });
-
-  childProcess.stdout.on("data", (data) => {
-    const logMsg = data.toString();
-    const logType = logMsg.match(/^\w+/);
-    console.log(colors[logType] + logMsg + "\x1b[0m");
   });
 
   childProcess.on("exit", () => {
