@@ -5,9 +5,9 @@ import path from "path";
 import { spawn } from "child_process";
 import { handleErrors } from "./src/error-analyzer.js";
 import chalk from "chalk";
-import dotenv from "dotenv";
+import dotenv from "universal-dotenv";
 
-dotenv.config();
+dotenv.init();
 
 async function getProjectType() {
   const packageJsonPath = path.join(process.cwd(), "package.json");
