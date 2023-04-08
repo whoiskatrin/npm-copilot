@@ -41,12 +41,15 @@ async function getProjectType() {
 }
 
 async function getPackageManager() {
+  const yarnLockPath = path.join(process.cwd(), "yarn.lock");
+  const pnpmLockPath = path.join(process.cwd(), "pnpm-lock.yaml");
+
   try {
-    await fs.readFile(path.join(process.cwd(), "yarn.lock"), "utf8");
+    await fs.access(yarnLockPath, fs.constants.F_OK);
     return "yarn";
   } catch (error) {
     try {
-      await fs.readFile(path.join(process.cwd(), "pnpm-lock.yaml"), "utf8");
+      await fs.access(pnpmLockPath, fs.constants.F_OK);
       return "pnpm";
     } catch (error) {
       return "npm";
